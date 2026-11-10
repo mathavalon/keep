@@ -148,6 +148,16 @@ begin
          email_confirmed_at = _confirmed
    where lower(email) = lower(_email);
 
+  -- A primeira pessoa confirmada vira membro das empresas já criadas.
+  -- Quem chega depois só entra por convite.
+  if not exists (
+    select 1 from public.keep_members where status = 'ok'
+  ) then
+    insert into public.keep_members (company_id, user_id, email, status, email_confirmed_at)
+    select id, auth.uid(), _email, 'ok', _confirmed
+    from public.keep_companies;
+  end if;
+
   update public.keep_collaborations
      set guest_user_id = auth.uid(),
          status = 'accepted',
