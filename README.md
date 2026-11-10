@@ -2,7 +2,7 @@
 
 Projeto separado da Avalon. Abra um **projeto novo no Lovable** a partir de `https://github.com/mathavalon/keep`. Não conecte o Lovable da Avalon e não use o banco dela.
 
-O Lovable cria o Supabase deste repositório e aplica `supabase/migrations/20261110220000_keep_init.sql`. A entrada do app é o login com confirmação de e-mail. O painel que já existe fica em `public/painel.html`.
+O Lovable cria o Supabase deste repositório e aplica as migrations em `supabase/migrations`. A entrada `/` é a homepage de captura. O login fica em `/login`. Visão geral, radar, editor e as outras telas ficam em `/app` e só abrem com o e-mail confirmado.
 
 
 
@@ -10,9 +10,9 @@ Motor e painel unificado inspirado em **OpenSEO** + **CrawlSEO**, com identidade
 
 ## 📂 Estrutura da Pasta `Keep`
 
-- `public/painel.html` — Painel interativo no visual **keep** (sidebar esquerda, seletor de página/período, 3 cards de funil Azul/Índigo/Cinza, gráfico de evolução temporal, donut de conversão e 3 abas do arsenal).
-- `src/App.tsx` — Entrada do Lovable: login e confirmação de e-mail antes do painel.
-- `supabase/migrations/20261110220000_keep_init.sql` — Banco próprio do Keep.
+- `public/keep-app.js` — Homepage, login e telas internas no design system novo.
+- `src/main.tsx` — Liga o login e a captura de leads ao Supabase deste projeto.
+- `supabase/migrations/` — Banco próprio do Keep, incluindo os contatos da homepage.
 - `harvest_live_data.py` — Coletor ao vivo (Google Autocomplete Brasil + métricas de TTFB/payload + extração do corpo HTML de todos os artigos via WP-JSON).
 - `enrich_kb.py` — Analisador On-Page (contagem de palavras, `H2`/`H3`, links internos para `/nossas-solucoes/`, imagens sem `alt`, classificação de estágio de funil e Prompts de IA/GEO).
 - `indexer_cli.py` — Utilitário de linha de comando (`--stats`, `--sync-live`).

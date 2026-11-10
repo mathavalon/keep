@@ -1,5 +1,6 @@
 node_modules/
 dist/
+*.tsbuildinfo
 data/google_keep_token.json
 data/*.db
 .env
