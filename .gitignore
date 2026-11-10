@@ -1,0 +1,5 @@
+data/google_keep_token.json
+data/*.db
+.env
+.env.*
+.DS_Store
