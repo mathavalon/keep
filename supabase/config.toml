@@ -1,0 +1,7 @@
+# Projeto novo do Keep. O Lovable preenche o id ao conectar o Supabase.
+# Não apontar para o projeto da Avalon.
+project_id = "keep"
+
+[auth]
+enabled = true
+enable_signup = true

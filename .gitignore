@@ -1,3 +1,5 @@
+node_modules/
+dist/
 data/google_keep_token.json
 data/*.db
 .env
