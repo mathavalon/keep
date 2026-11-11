@@ -4,6 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>keep — SEO, GEO & Crawl Intelligence</title>
+  <link rel="icon" href="/favicon.png" type="image/png" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -499,6 +501,134 @@
       background: var(--surface-subtle);
     }
   </style>
+  <link rel="stylesheet" href="/keep.css" />
+  <style>
+    button.side-link{width:100%;border:0;background:none;cursor:pointer;font:inherit;text-align:left}
+    .screen-view{display:none}
+    .screen-view.active{display:block}
+    .stat-more{border:0;background:transparent;padding:0;font:inherit;font-size:12px;font-weight:600;cursor:pointer;color:var(--blue)}
+    .stat-card.blue .stat-more,.stat-card.indigo .stat-more{color:#fff}
+    .filter-bar{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:22px}
+    .field-group{display:flex;flex-direction:column;gap:6px;min-width:240px;flex:1}
+    .field-group label{font-size:10px;font-weight:600;color:#73778f}
+    .keep-select,.keep-input{border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:#fff;color:var(--ink);width:100%}
+    .controls{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 16px}
+    .controls .keep-select,.controls .keep-input{width:auto;flex:1;min-width:160px}
+    .cards-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin:12px 0 22px}
+    .section-h2{font-size:16px;margin:8px 0}
+    .section-header{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:18px 0 8px}
+    .funnel-grid{display:grid;grid-template-columns:220px 1fr;gap:18px;align-items:center}
+    .scores-4-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .mini-score-box{border:1px solid var(--line);border-radius:10px;padding:12px}
+    .mode-switch{display:flex;gap:6px;flex-wrap:wrap}
+    .mode-btn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:8px 10px;font:inherit;font-size:12px;cursor:pointer}
+    .mode-btn.active{background:var(--pale);color:var(--blue);border-color:#d5dcff}
+    .legend-row{display:flex;gap:14px;font-size:12px;color:var(--muted);margin-bottom:8px}
+    .modal-overlay{display:none;position:fixed;inset:0;background:#19193266;z-index:80;align-items:center;justify-content:center}
+    .modal-overlay.open{display:flex}
+    .modal-box{background:#fff;border-radius:16px;padding:22px;width:min(720px,calc(100% - 32px))}
+    .pill{display:inline-flex;align-items:center;border-radius:30px;padding:4px 8px;font-size:11px;font-weight:600;background:var(--pale);color:var(--blue)}
+    .pill-warn{background:#fff5de;color:#8a6110}
+    .pill-danger{background:#fdecec;color:#b42318}
+    .pill-ok{background:#e8f7f1;color:#128b68}
+    .pill-indigo{background:#ecebff;color:var(--indigo)}
+
+    html{scrollbar-color:#4b6bfb #ffffff;scrollbar-width:thin;background:#fff}
+    body{background:#fff}
+    ::-webkit-scrollbar{width:12px;height:12px}
+    ::-webkit-scrollbar-track{background:#ffffff}
+    ::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#7c95ff,#4b6bfb);border-radius:999px;border:3px solid #ffffff}
+    ::-webkit-scrollbar-thumb:hover{background:#3959ed}
+    .sidebar{scrollbar-color:#4b6bfb transparent;scrollbar-width:thin}
+    .sidebar::-webkit-scrollbar{width:6px}
+    .sidebar::-webkit-scrollbar-track{background:transparent}
+    .sidebar::-webkit-scrollbar-thumb{background:#4b6bfb;border:0;border-radius:999px}
+    button.side-link svg,button.workspace-select svg,button.sidebar-profile svg{flex-shrink:0}
+    .usage-title{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+    .usage-title span:first-child{min-width:0;line-height:1.35}
+    .sidebar-profile{width:100%;border:0;background:none;font:inherit;text-align:left;color:inherit}
+    .search-trigger{cursor:pointer;font:inherit}
+    .header-actions .profile-avatar{border:0;cursor:pointer}
+    #screen-2 .radar-zone,#screen-3 .radar-zone,#screen-4 .radar-zone{margin-top:40px}
+    #screen-2 .radar-catalog{margin-top:56px}
+    #screen-2 .section-header,#screen-3 .section-header,#screen-4 .section-header{margin:0 0 16px;align-items:baseline}
+    #screen-2 .section-h2,#screen-3 .section-h2,#screen-4 .section-h2{margin:0;font-size:20px;letter-spacing:-0.02em;color:var(--ink)}
+    #screen-2 .radar-note,#screen-3 .radar-note,#screen-4 .radar-note{margin:0;font-size:13px;line-height:1.4;color:var(--muted)}
+    #screen-2 .radar-briefs{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+    #screen-2 .radar-pillars{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+    #screen-2 .radar-brief,#screen-2 .radar-pillar{display:flex;flex-direction:column;gap:10px;min-width:0;background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px 22px 18px;text-align:left;color:inherit}
+    #screen-2 .radar-pillar{width:100%;font:inherit;cursor:pointer}
+    #screen-2 .radar-pillar:hover{border-color:#b9c6ff}
+    #screen-2 .radar-pillar.active{border-color:#c5d0ff;background:#f7f8ff}
+    #screen-2 .radar-pillar:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+    #screen-2 .item-top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+    #screen-2 .item-top h3{margin:0;font-size:11px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:var(--blue)}
+    #screen-2 .radar-brief h4,#screen-2 .radar-pillar h4{margin:0;font-size:17px;line-height:1.35;letter-spacing:-0.02em;font-weight:650;color:var(--ink)}
+    #screen-2 .radar-brief p,#screen-2 .radar-pillar p{margin:0;font-size:13.5px;line-height:1.6;color:var(--muted)}
+    #screen-2 .radar-product{margin-top:auto;padding-top:14px;border-top:1px solid var(--line);color:var(--indigo);font-weight:600;font-size:12.5px;line-height:1.45}
+    #screen-2 .radar-keys,#screen-3 .radar-keys,#screen-4 .radar-keys{display:flex;flex-wrap:wrap;gap:6px}
+    #screen-2 .live-line{margin-top:auto;padding-top:12px;border-top:1px solid var(--line);font-size:12.5px;line-height:1.45}
+    #screen-2 .live-line span{display:block;margin-bottom:4px;font-size:11px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:#b42318}
+    #screen-2 .live-line a{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;color:var(--ink);font-weight:550}
+    #screen-2 .controls{margin:0 0 14px;padding:14px;gap:10px}
+    #screen-2 .radar-table-wrap{overflow:auto;border-radius:16px}
+    #screen-2 .radar-table{width:100%;min-width:880px;table-layout:fixed;border-collapse:collapse;white-space:normal}
+    #screen-2 .radar-table th{padding:14px 16px;font-size:11px;letter-spacing:0.06em;white-space:nowrap}
+    #screen-2 .radar-table td{padding:18px 16px;white-space:normal;vertical-align:top;font-size:13px;line-height:1.45;color:var(--ink)}
+    #screen-2 .radar-table th:nth-child(1),#screen-2 .radar-table td:nth-child(1){width:112px}
+    #screen-2 .radar-table th:nth-child(3),#screen-2 .radar-table td:nth-child(3){width:156px}
+    #screen-2 .radar-table th:nth-child(4),#screen-2 .radar-table td:nth-child(4){width:168px}
+    #screen-2 .radar-table th:nth-child(5),#screen-2 .radar-table td:nth-child(5){width:84px}
+    #screen-2 .radar-score{text-align:right}
+    #screen-2 .radar-date time{display:block;margin-bottom:8px;font-weight:650;font-variant-numeric:tabular-nums}
+    #screen-2 .radar-article a{display:block;font-size:14.5px;line-height:1.4;font-weight:650;color:var(--ink)}
+    #screen-2 .radar-article p{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin:8px 0 12px;color:var(--muted);font-size:12.5px;line-height:1.5}
+    #screen-2 .radar-stack{display:flex;flex-direction:column;align-items:flex-start;gap:8px}
+    #screen-2 .radar-onpage span{color:var(--muted)}
+    #screen-2 .radar-onpage strong{color:var(--ink);font-variant-numeric:tabular-nums}
+    #screen-2 .radar-score strong{display:block;font-size:22px;line-height:1;letter-spacing:-0.03em;font-variant-numeric:tabular-nums}
+    #screen-2 .radar-score span{color:var(--muted);font-size:11px}
+    @media(max-width:1100px){#screen-2 .radar-pillars{grid-template-columns:1fr 1fr}}
+    #screen-3 .answer-list{display:flex;flex-direction:column;gap:14px}
+    #screen-3 .answer-card{display:flex;flex-direction:column;gap:12px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px 24px 18px}
+    #screen-3 .answer-card h3{margin:0;max-width:68ch;font-size:18px;line-height:1.35;letter-spacing:-0.02em;font-weight:650;color:var(--ink)}
+    #screen-3 .answer-card p{margin:0;max-width:74ch;font-size:14px;line-height:1.65;color:var(--muted)}
+    #screen-3 .answer-action{margin-top:2px;padding-top:14px;border-top:1px solid var(--line);color:var(--indigo);font-weight:600;font-size:13.5px;line-height:1.5}
+    #screen-3 .suggest-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    #screen-3 .suggest-card{display:flex;flex-direction:column;gap:12px;min-width:0;background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px 22px 8px}
+    #screen-3 .suggest-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+    #screen-3 .suggest-head h3{margin:0;font-size:17px;line-height:1.35;letter-spacing:-0.02em;font-weight:650;color:var(--ink)}
+    #screen-3 .suggest-pillar{margin:0;font-size:12px;line-height:1.4;color:var(--muted)}
+    #screen-3 .suggest-list{list-style:none;margin:4px 0 0;padding:0;border-top:1px solid var(--line)}
+    #screen-3 .suggest-list li{padding:13px 0;border-bottom:1px solid var(--line);font-size:14px;line-height:1.45;color:var(--ink)}
+    #screen-3 .suggest-list li:last-child{border-bottom:0}
+    #screen-3 .suggest-empty{margin:0;padding:14px 0 10px;font-size:13.5px;line-height:1.5;color:var(--muted)}
+    #screen-4 .vital-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+    #screen-4 .vital-card{display:flex;flex-direction:column;gap:12px;min-width:0;background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px}
+    #screen-4 .vital-card h3{margin:0;font-size:13px;line-height:1.4;font-weight:650;color:var(--muted)}
+    #screen-4 .vital-card strong{font-size:32px;line-height:1;letter-spacing:-0.03em;font-variant-numeric:tabular-nums;color:var(--ink)}
+    #screen-4 .vital-card.alert strong{color:#b42318}
+    #screen-4 .vital-card p{margin:0;font-size:13.5px;line-height:1.55;color:var(--muted)}
+    #screen-4 .vital-card code{font-size:0.92em;color:var(--ink)}
+    #screen-4 .audit-list{display:flex;flex-direction:column;gap:14px}
+    #screen-4 .finding{display:flex;flex-direction:column;gap:12px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px 24px 18px}
+    #screen-4 .finding h3{margin:0;max-width:68ch;font-size:17px;line-height:1.4;letter-spacing:-0.02em;font-weight:650;color:var(--ink)}
+    #screen-4 .finding p{margin:0;max-width:78ch;font-size:14px;line-height:1.6;color:var(--muted)}
+    #screen-4 .finding-fix{padding-top:14px;border-top:1px solid var(--line);color:var(--indigo);font-weight:600}
+    #screen-4 .health-table-wrap{overflow:auto;border-radius:16px}
+    #screen-4 .health-table{width:100%;min-width:860px;table-layout:fixed;border-collapse:collapse;white-space:normal}
+    #screen-4 .health-table th{padding:14px 16px;font-size:11px;letter-spacing:0.06em;white-space:nowrap}
+    #screen-4 .health-table td{padding:18px 16px;white-space:normal;vertical-align:top;font-size:13px;line-height:1.45;color:var(--ink)}
+    #screen-4 .health-table th:nth-child(1),#screen-4 .health-table td:nth-child(1){width:112px}
+    #screen-4 .health-table th:nth-child(3),#screen-4 .health-table td:nth-child(3){width:140px}
+    #screen-4 .health-table th:nth-child(4),#screen-4 .health-table td:nth-child(4){width:280px}
+    #screen-4 .health-date time{display:block;font-weight:650;font-variant-numeric:tabular-nums}
+    #screen-4 .health-article a{display:block;font-size:14.5px;line-height:1.4;font-weight:650;color:var(--ink)}
+    #screen-4 .health-stack{display:flex;flex-direction:column;gap:6px;color:var(--muted)}
+    #screen-4 .health-stack strong{color:var(--ink);font-variant-numeric:tabular-nums}
+    #screen-4 .health-next{color:var(--indigo);font-weight:600;line-height:1.5}
+    @media(max-width:760px){.funnel-grid,.scores-4-grid,#screen-2 .radar-briefs,#screen-2 .radar-pillars,#screen-3 .suggest-grid,#screen-4 .vital-grid{grid-template-columns:1fr}}
+  </style>
 </head>
 <body>
   <!-- Modal Comparativo de Marcas -->
@@ -515,256 +645,241 @@
     </div>
   </div>
 
-  <div class="app-shell">
-    <!-- Sidebar Esquerda: 4 Funções com Ícones SVG Limpos -->
+  <div class="app-layout">
     <aside class="sidebar">
-      <div class="keep-logo" onclick="switchScreen(1)" title="keep — Início">
-        <svg width="30" height="30" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect x="38" y="6" width="16" height="16" fill="#4B6BFB"/>
-          <path d="M18 6C18 22.5685 31.4315 36 48 36" stroke="#4B6BFB" stroke-width="11" stroke-linecap="butt"/>
-          <path d="M10 34C26.5685 34 40 47.4315 40 64" stroke="#4B6BFB" stroke-width="11" stroke-linecap="butt"/>
-          <circle cx="16" cy="52" r="8" fill="#4B6BFB"/>
-        </svg>
+      <a href="/" aria-label="Keep, início">
+        <span class="brand"><img class="brand-base" src="/assets/keep-logo-white.png" alt="Keep"><img class="brand-blue" src="/assets/keep-logo-white.png" alt="" aria-hidden="true"></span>
+      </a>
+      <button class="workspace-select" onclick="openBrandModal()">
+        <span class="workspace-avatar" id="avatar-sub">AD</span>
+        <span><strong id="active-brand-pill">Adfert</strong><small>Workspace da marca</small></span>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+      <div class="side-label">Entenda o cenário</div>
+      <button class="side-link active" id="nav-1" onclick="switchScreen(1)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z"/></svg>Visão geral</button>
+      <button class="side-link" id="nav-2" onclick="switchScreen(2)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9M12 7a5 5 0 1 0 5 5M12 12l8-8M17 3h4v4"/></svg>Radar</button>
+      <button class="side-link" id="nav-3" onclick="switchScreen(3)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 2.3 6.7L21 12l-6.7 2.3L12 21l-2.3-6.7L3 12l6.7-2.3z"/></svg>Buscas e respostas</button>
+      <button class="side-link" id="nav-4" onclick="switchScreen(4)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12h5l3-8 4 16 3-8h5"/></svg>Saúde do site</button>
+      <div class="side-bottom">
+        <a class="usage-mini" href="#2" onclick="switchScreen(2);return false;">
+          <div class="usage-title"><span>Artigos em português</span><span id="usage-count">40</span></div>
+          <div class="tiny-progress"><i id="usage-bar" style="width:35%"></i></div>
+          <p id="usage-note">Do catálogo publicado desta marca</p>
+        </a>
+        <button class="sidebar-profile" onclick="openBrandModal()">
+          <span class="profile-avatar" id="header-avatar">AD</span>
+          <span><strong id="profile-name">Adfert</strong><small>Trocar a marca</small></span>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
       </div>
-
-      <button class="nav-btn active" id="nav-1" onclick="switchScreen(1)" title="1. Dashboard Executivo">
-        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
-        <span>Painel</span>
-      </button>
-
-      <button class="nav-btn" id="nav-2" onclick="switchScreen(2)" title="2. Radar 6 Pilares & Catálogo Editorial">
-        <svg viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
-        <span>Radar</span>
-      </button>
-
-      <button class="nav-btn" id="nav-3" onclick="switchScreen(3)" title="3. AI Prompt Explorer & Keywords (OpenSEO)">
-        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
-        <span>Prompts</span>
-      </button>
-
-      <button class="nav-btn" id="nav-4" onclick="switchScreen(4)" title="4. Auditoria Técnica & Crawler (CrawlSEO)">
-        <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-        <span>Auditoria</span>
-      </button>
     </aside>
-
-    <!-- Área Principal -->
-    <main class="main-area">
-      <!-- Topbar Padrão Keep -->
-      <div class="topbar">
-        <div class="topbar-left">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
-          <span class="topbar-title" id="screen-title">Dashboard</span>
-          <span class="pill" id="active-brand-pill">Adfert</span>
-        </div>
-        <div class="topbar-right">
-          <button class="btn-keep" style="padding:6px 12px" onclick="openBrandModal()">Trocar Cliente</button>
-          <button class="avatar-circle" onclick="openBrandModal()" title="Alternar Cliente">
-            KP
-            <span class="avatar-sub" id="avatar-sub">AD</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- Barra de Filtros Global (Página + Período) -->
-      <div class="filter-bar">
-        <div class="field-group">
-          <label>Página / Cliente</label>
-          <div class="field-row">
-            <select class="keep-select" id="brand-select" onchange="selectBrand(this.value)">
-              <option value="adfert">Adfert — https://adfert.com.br/artigos/</option>
-              <option value="intrivia">Intrivia — https://intrivia.com.br/artigos/</option>
-            </select>
-            <button class="btn-keep" onclick="openBrandModal()">Comparar</button>
+    <div class="sidebar-scrim" onclick="document.querySelector('.sidebar').classList.remove('open')"></div>
+    <div class="app-right">
+      <header class="app-header">
+        <div style="display:flex;align-items:center;gap:8px">
+          <button class="icon-btn mobile-app-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open')" aria-label="Abrir navegação"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+          <div class="breadcrumb">
+            <span>Workspace</span>
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg>
+            <strong id="crumb-brand">Adfert</strong>
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg>
+            <span id="screen-title">Visão geral</span>
           </div>
         </div>
-        <div class="field-group">
-          <label>Período & Fonte de Dados</label>
-          <input type="text" class="keep-input" readonly value="Safra 2025/2026 • WP-JSON + Google Suggest + CrawlSEO" />
+        <div class="header-actions">
+          <span class="pill">Safra 2025/2026</span>
+          <button class="search-trigger" onclick="switchScreen(2);document.getElementById('search').focus()" aria-label="Buscar no Keep"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 21l-5-5M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0"/></svg><span>Encontre no Keep</span><kbd>⌘ K</kbd></button>
+          <button class="icon-btn notification-btn" onclick="openBrandModal()" aria-label="Marcas conectadas"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 8-3 8h18s-3-1-3-8M10 21h4"/></svg></button>
+          <button class="profile-avatar" id="header-mark" onclick="openBrandModal()" aria-label="Trocar marca">AD</button>
         </div>
-      </div>
-
-      <!-- ========================================================= -->
-      <!-- TELA 1: DASHBOARD EXECUTIVO (Leve, Fiel ao Anexo Keep)    -->
-      <!-- ========================================================= -->
-      <section class="screen-view active" id="screen-1">
-        <div class="kpi-grid">
-          <div class="kpi-card kpi-blue">
-            <div class="kpi-num" id="kpi-visitas">40</div>
-            <div class="kpi-label" id="kpi-visitas-label">Artigos PT (114 URLs Indexadas)</div>
-            <button class="kpi-btn" onclick="switchScreen(2)">Ver lista</button>
-          </div>
-          <div class="kpi-card kpi-indigo">
-            <div class="kpi-num" id="kpi-intencoes">23</div>
-            <div class="kpi-label" id="kpi-intencoes-label">Intenções Mapeadas (Google + IA)</div>
-            <button class="kpi-btn" onclick="switchScreen(3)">Ver lista</button>
-          </div>
-          <div class="kpi-card kpi-gray">
-            <div class="kpi-num" id="kpi-conversao">10/40</div>
-            <div class="kpi-label" id="kpi-conversao-label">Artigos c/ Link p/ Soluções (25.0%)</div>
-            <button class="kpi-btn" onclick="switchScreen(4)">Ver lista</button>
-          </div>
-        </div>
-
-        <div class="section-header">
-          <h2 class="section-h2">Evolução temporal</h2>
-          <div class="mode-switch">
-            <button class="mode-btn active" id="chart-mode-pub" onclick="setChartMode('pub')">Cadência Real Publicada (WP-JSON)</button>
-            <button class="mode-btn" id="chart-mode-gsc" onclick="setChartMode('gsc')">Projeção Search Console (Cliques & Intenções)</button>
-          </div>
-        </div>
-        <div class="card-panel">
-          <div class="legend-row" id="chart-legend"></div>
-          <div id="timeline-svg-wrap" style="width:100%;overflow:hidden"></div>
-          <div style="font-size:0.75rem;color:var(--muted);text-align:center;margin-top:8px" id="chart-footnote"></div>
-        </div>
-
-        <div class="section-header">
-          <h2 class="section-h2">Funil por origem, taxa de conversão e Scorecard das 4 Frentes</h2>
-        </div>
-        <div class="card-panel funnel-grid">
-          <div style="text-align:center">
-            <div style="margin-bottom:8px">
-              <span style="border:1px solid var(--text);padding:3px 9px;border-radius:4px;font-size:0.72rem;font-weight:700">ORGANIC + GEO</span>
+      </header>
+      <main class="app-main" id="main">
+        <div class="filter-bar">
+          <div class="field-group">
+            <label>Página / Cliente</label>
+            <div class="field-row">
+              <select class="keep-select" id="brand-select" onchange="selectBrand(this.value)">
+                <option value="adfert">Adfert — adfert.com.br</option>
+                <option value="intrivia">Intrivia — intrivia.com.br</option>
+              </select>
             </div>
-            <div style="font-size:0.86rem;font-weight:600;margin-bottom:8px" id="donut-title"></div>
-            <div id="donut-svg-wrap"></div>
           </div>
-          <div class="scores-4-grid" id="scores-4"></div>
-        </div>
-      </section>
-
-      <!-- ========================================================= -->
-      <!-- TELA 2: RADAR 6 PILARES, PAUTAS DO MÊS & CATÁLOGO         -->
-      <!-- ========================================================= -->
-      <section class="screen-view" id="screen-2">
-        <div class="section-header" style="margin-top:4px">
-          <h2 class="section-h2">Sugestão Editorial — Os 2 Novos Artigos deste Mês</h2>
-          <span class="pill pill-indigo">Planejamento Novembro</span>
-        </div>
-        <div class="cards-grid" id="november-cards" style="grid-template-columns:repeat(auto-fit,minmax(400px,1fr))"></div>
-
-        <div class="section-header">
-          <h2 class="section-h2">Radar em Tempo Real — Os 6 Pilares (Clique para filtrar catálogo)</h2>
-          <span style="font-size:0.78rem;color:var(--muted)">Resumo executivo + última manchete RSS</span>
-        </div>
-        <div class="cards-grid" id="pillars"></div>
-
-        <div class="section-header">
-          <h2 class="section-h2">Catálogo de Artigos Indexados (<span id="count-label">0</span>)</h2>
-        </div>
-        <div class="controls">
-          <input type="text" class="keep-input" style="flex:1;min-width:220px" id="search" placeholder="Buscar artigo por título, palavra-chave ou slug..." />
-          <select class="keep-select" style="width:auto" id="theme-filter">
-            <option value="ALL">Todos os 6 Pilares</option>
-            <option value="1. Aditivos">1. Aditivos</option>
-            <option value="2. Fertilizantes">2. Fertilizantes</option>
-            <option value="3. Agro">3. Agro</option>
-            <option value="4. Agro Global">4. Agro Global</option>
-            <option value="5. Clima e Bioma">5. Clima e Bioma</option>
-            <option value="6. Complementares & Entretenimento">6. Complementares & Entretenimento</option>
-          </select>
-          <select class="keep-select" style="width:auto" id="intent-filter">
-            <option value="ALL">Todos os Estágios</option>
-            <option value="Topo / Visitas">Topo / Visitas</option>
-            <option value="Meio / Intenção">Meio / Intenção</option>
-            <option value="Fundo / Produto">Fundo / Produto</option>
-          </select>
-          <select class="keep-select" style="width:auto" id="lang-filter">
-            <option value="pt" selected>Português (PT-BR)</option>
-            <option value="en">Inglês (EN)</option>
-            <option value="es">Espanhol (ES)</option>
-            <option value="ALL">Todos os Idiomas</option>
-          </select>
-          <button class="btn-keep" onclick="resetFilters()">Limpar</button>
-        </div>
-
-        <table>
-          <thead>
-            <tr>
-              <th style="width:95px">Data</th>
-              <th>Artigo & URL Indexada</th>
-              <th style="width:140px">Funil & Conversão</th>
-              <th style="width:170px">Métricas On-Page</th>
-              <th style="width:90px">Score</th>
-            </tr>
-          </thead>
-          <tbody id="articles-body"></tbody>
-        </table>
-      </section>
-
-      <!-- ========================================================= -->
-      <!-- TELA 3: FUNÇÃO AI PROMPT EXPLORER & GOOGLE SUGGEST        -->
-      <!-- ========================================================= -->
-      <section class="screen-view" id="screen-3">
-        <div class="section-header" style="margin-top:4px">
-          <div>
-            <h2 class="section-h2">AI Prompt Explorer & Visibilidade Generativa (Motor OpenSEO)</h2>
-            <p style="font-size:0.82rem;color:var(--muted)">Perguntas reais feitas por compradores e agrônomos no ChatGPT, Perplexity, Gemini e Google AI Overviews.</p>
+          <div class="field-group">
+            <label>Período e fonte</label>
+            <input type="text" class="keep-input" readonly value="Safra 2025/2026 • WP-JSON + Google Suggest + CrawlSEO" />
           </div>
-          <span class="pill">GEO Intelligence</span>
         </div>
 
-        <table style="margin-bottom:24px">
-          <thead>
-            <tr>
-              <th>Prompt / Pergunta Real nas IAs</th>
-              <th style="width:145px">Pilar & Estágio</th>
-              <th style="width:155px">Status de Citação</th>
-              <th style="width:300px">Diagnóstico & Ação p/ Ganhar a Resposta</th>
-            </tr>
-          </thead>
-          <tbody id="prompts-body"></tbody>
-        </table>
-
-        <div class="section-header">
-          <div>
-            <h2 class="section-h2">Google Autocomplete Harvester (Motor CrawlSEO)</h2>
-            <p style="font-size:0.82rem;color:var(--muted)">Buscas de cauda longa extraídas gratuitamente da API oficial de sugestões do Google Brasil.</p>
+        <section class="screen-view active" id="screen-1">
+          <div class="page-title">
+            <div>
+              <h1>Seu conteúdo tem um próximo passo.</h1>
+              <p>Artigos publicados, intenções mapeadas e quantos deles levam a uma solução. Os números saem do catálogo desta marca.</p>
+            </div>
           </div>
-          <span class="pill pill-indigo">Tempo Real</span>
-        </div>
-        <div class="cards-grid" id="autocomplete-grid"></div>
-      </section>
-
-      <!-- ========================================================= -->
-      <!-- TELA 4: FUNÇÃO AUDITORIA TÉCNICA, WEB VITALS & CRAWLER    -->
-      <!-- ========================================================= -->
-      <section class="screen-view" id="screen-4">
-        <div class="section-header" style="margin-top:4px">
-          <div>
-            <h2 class="section-h2">Core Web Vitals & Diagnóstico HTTP (Motor CrawlSEO + web-perf)</h2>
-            <p style="font-size:0.82rem;color:var(--muted)">Medição direta de latência de servidor (TTFB), peso de documento, cache de borda e links internos.</p>
+          <div class="stat-grid">
+            <div class="stat-card blue">
+              <span class="stat-label" id="kpi-visitas-label">Artigos em português</span>
+              <strong id="kpi-visitas">40</strong>
+              <button class="stat-more" onclick="switchScreen(2)">Ver a lista</button>
+            </div>
+            <div class="stat-card indigo">
+              <span class="stat-label" id="kpi-intencoes-label">Intenções mapeadas</span>
+              <strong id="kpi-intencoes">23</strong>
+              <button class="stat-more" onclick="switchScreen(3)">Ver a lista</button>
+            </div>
+            <div class="stat-card">
+              <span class="stat-label" id="kpi-conversao-label">Ligados a uma solução</span>
+              <strong id="kpi-conversao">10/40</strong>
+              <button class="stat-more" onclick="switchScreen(4)">Ver a lista</button>
+            </div>
           </div>
-          <span class="pill pill-ok">Auditoria Ativa</span>
-        </div>
-        <div class="cards-grid" id="vitals-grid"></div>
+          <section class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>Conteúdo que ganha caminho.</h2>
+                <p id="chart-footnote"></p>
+              </div>
+              <div class="mode-switch">
+                <button class="mode-btn active" id="chart-mode-pub" onclick="setChartMode('pub')">Cadência publicada</button>
+                <button class="mode-btn" id="chart-mode-gsc" onclick="setChartMode('gsc')">Projeção de cliques</button>
+              </div>
+            </div>
+            <div class="legend-row" id="chart-legend"></div>
+            <div id="timeline-svg-wrap"></div>
+          </section>
+          <section class="panel" style="margin-top:18px">
+            <div class="panel-head">
+              <div>
+                <h2>Onde o artigo para, e onde segue.</h2>
+                <p id="donut-title"></p>
+              </div>
+            </div>
+            <div class="funnel-grid">
+              <div id="donut-svg-wrap"></div>
+              <div class="scores-4-grid" id="scores-4"></div>
+            </div>
+          </section>
+        </section>
 
-        <div class="section-header">
-          <h2 class="section-h2">As 5 Correções Prioritárias de Engenharia SEO & GEO</h2>
-        </div>
-        <div id="audit-list" style="margin-bottom:24px"></div>
-
-        <div class="section-header">
-          <div>
-            <h2 class="section-h2">Artigos Órfãos de Conversão (Sem Link Interno para Produto/Solução)</h2>
-            <p style="font-size:0.82rem;color:var(--muted)">Artigos em Português que atraem tráfego orgânico, mas não possuem nenhum link apontando para <code>/nossas-solucoes/</code> ou contato.</p>
+        <section class="screen-view" id="screen-2">
+          <div class="page-title"><div><h1>Radar</h1><p>As pautas do mês, os seis pilares e o catálogo publicado.</p></div></div>
+          <section class="radar-zone">
+            <div class="section-header">
+              <h2 class="section-h2">Sugestão editorial do mês</h2>
+              <span class="pill pill-indigo">Planejamento</span>
+            </div>
+            <div class="radar-briefs" id="november-cards"></div>
+          </section>
+          <section class="radar-zone">
+            <div class="section-header">
+              <h2 class="section-h2">Seis pilares</h2>
+              <p class="radar-note">Clique num pilar para filtrar o catálogo.</p>
+            </div>
+            <div class="radar-pillars" id="pillars"></div>
+          </section>
+          <section class="radar-zone radar-catalog">
+            <div class="section-header">
+              <h2 class="section-h2">Catálogo (<span id="count-label">0</span>)</h2>
+            </div>
+          <div class="controls">
+            <input type="text" class="keep-input" id="search" placeholder="Buscar artigo por título, palavra-chave ou slug..." />
+            <select class="keep-select" id="theme-filter">
+              <option value="ALL">Todos os pilares</option>
+              <option value="1. Aditivos">1. Aditivos</option>
+              <option value="2. Fertilizantes">2. Fertilizantes</option>
+              <option value="3. Agro">3. Agro</option>
+              <option value="4. Agro Global">4. Agro Global</option>
+              <option value="5. Clima e Bioma">5. Clima e Bioma</option>
+              <option value="6. Complementares & Entretenimento">6. Complementares</option>
+            </select>
+            <select class="keep-select" id="intent-filter">
+              <option value="ALL">Todos os estágios</option>
+              <option value="Topo / Visitas">Topo / Visitas</option>
+              <option value="Meio / Intenção">Meio / Intenção</option>
+              <option value="Fundo / Produto">Fundo / Produto</option>
+            </select>
+            <select class="keep-select" id="lang-filter">
+              <option value="pt" selected>Português</option>
+              <option value="en">Inglês</option>
+              <option value="es">Espanhol</option>
+              <option value="ALL">Todos os idiomas</option>
+            </select>
+            <button class="btn secondary small" onclick="resetFilters()">Limpar</button>
           </div>
-          <span class="pill pill-danger" id="orphan-count-pill">0 artigos</span>
-        </div>
-        <table>
-          <thead>
-            <tr>
-              <th style="width:95px">Data</th>
-              <th>Artigo sem Link de Conversão</th>
-              <th style="width:140px">Palavras & H2</th>
-              <th style="width:220px">Recomendação de Link Interno</th>
-            </tr>
-          </thead>
-          <tbody id="orphans-body"></tbody>
-        </table>
-      </section>
-    </main>
+          <div class="panel radar-table-wrap">
+            <table class="data-table radar-table">
+              <thead>
+                <tr>
+                  <th>Data</th>
+                  <th>Artigo</th>
+                  <th>Funil</th>
+                  <th>On-page</th>
+                  <th>Score</th>
+                </tr>
+              </thead>
+              <tbody id="articles-body"></tbody>
+            </table>
+          </div>
+          </section>
+        </section>
+
+        <section class="screen-view" id="screen-3">
+          <div class="page-title"><div><h1>Buscas e respostas</h1><p>Perguntas organizadas por pilar e as buscas sugeridas no Google Brasil.</p></div></div>
+          <section class="radar-zone">
+            <div class="section-header">
+              <h2 class="section-h2">Perguntas</h2>
+              <p class="radar-note">O que a marca já responde, e o que ainda falta.</p>
+            </div>
+            <div class="answer-list" id="prompts-body"></div>
+          </section>
+          <section class="radar-zone">
+            <div class="section-header">
+              <h2 class="section-h2">Buscas sugeridas</h2>
+              <p class="radar-note">O que o Google Brasil completa a partir de cada busca.</p>
+            </div>
+            <div class="suggest-grid" id="autocomplete-grid"></div>
+          </section>
+        </section>
+
+        <section class="screen-view" id="screen-4">
+          <div class="page-title"><div><h1>Saúde do site</h1><p>Latência, correções prioritárias e artigos sem caminho até a solução.</p></div></div>
+          <section class="radar-zone">
+            <div class="section-header">
+              <h2 class="section-h2">Medidas</h2>
+              <p class="radar-note">Tempo de resposta, peso da página e artigos que ainda não apontam para a solução.</p>
+            </div>
+            <div class="vital-grid" id="vitals-grid"></div>
+          </section>
+          <section class="radar-zone">
+            <div class="section-header">
+              <h2 class="section-h2">Correções primeiro</h2>
+              <p class="radar-note">O que o código está fazendo, o efeito, e o que mudar.</p>
+            </div>
+            <div class="audit-list" id="audit-list"></div>
+          </section>
+          <section class="radar-zone">
+            <div class="section-header">
+              <h2 class="section-h2">Sem ligação com a solução</h2>
+              <span class="pill pill-danger" id="orphan-count-pill">0 artigos</span>
+            </div>
+            <div class="panel health-table-wrap">
+              <table class="data-table health-table">
+                <thead>
+                  <tr>
+                    <th>Data</th>
+                    <th>Artigo</th>
+                    <th>Extensão</th>
+                    <th>Próximo link</th>
+                  </tr>
+                </thead>
+                <tbody id="orphans-body"></tbody>
+              </table>
+            </div>
+          </section>
+        </section>
+      </main>
+    </div>
   </div>
 
   <script>
@@ -774,10 +889,10 @@
     let chartMode = "pub";
 
     const SCREEN_TITLES = {
-      1: "Dashboard Executivo",
-      2: "Radar 6 Pilares & Catálogo Editorial",
-      3: "AI Prompt Explorer & Buscas (OpenSEO)",
-      4: "Auditoria Técnica & Crawler (CrawlSEO)"
+      1: "Visão geral",
+      2: "Radar",
+      3: "Buscas e respostas",
+      4: "Saúde do site"
     };
 
     const SHORT_RADAR = {
@@ -955,8 +1070,17 @@
       const suggestCount = (b.autocomplete || []).reduce((acc, item) => acc + (item.suggestions ? item.suggestions.length : 0), 0);
       const promptCount = (b.ai_prompts || []).length;
 
+      const mark = b.id === "adfert" ? "AD" : "IN";
       document.getElementById("active-brand-pill").textContent = b.name;
-      document.getElementById("avatar-sub").textContent = b.id === "adfert" ? "AD" : "IN";
+      document.getElementById("avatar-sub").textContent = mark;
+      document.getElementById("crumb-brand").textContent = b.name;
+      document.getElementById("profile-name").textContent = b.name;
+      document.getElementById("header-mark").textContent = mark;
+      const usagePt = b.articles.filter(a => a.lang === "pt").length;
+      const usageTotal = b.stats.total_indexed_posts || usagePt;
+      document.getElementById("usage-count").textContent = usagePt + " / " + usageTotal;
+      document.getElementById("usage-bar").style.width = Math.round((usagePt / Math.max(1, usageTotal)) * 100) + "%";
+      document.getElementById("usage-note").textContent = usageTotal + " URLs no catálogo";
       document.getElementById("kpi-visitas").textContent = ptArts.length;
       document.getElementById("kpi-visitas-label").textContent = `Artigos PT (${b.stats.total_indexed_posts} URLs Indexadas)`;
       document.getElementById("kpi-intencoes").textContent = suggestCount + promptCount;
@@ -1021,15 +1145,15 @@
     function renderScreen2() {
       const b = getBrandData();
       document.getElementById("november-cards").innerHTML = (b.november_articles || []).map(na => `
-        <div class="item-card">
+        <article class="radar-brief">
           <div class="item-top">
             <h3>${esc(na.slot)}</h3>
             <span class="pill pill-indigo">${esc(na.intent)}</span>
           </div>
           <h4>${esc(na.title)}</h4>
           <p>${esc(na.rationale)}</p>
-          <div style="font-size:0.76rem;color:var(--indigo);font-weight:600">Produto conectado: ${esc(na.target_product)}</div>
-        </div>
+          <p class="radar-product">Produto conectado: ${esc(na.target_product)}</p>
+        </article>
       `).join("");
 
       const currentTheme = document.getElementById("theme-filter").value;
@@ -1040,20 +1164,18 @@
         const topLive = (ins.live_headlines && ins.live_headlines.length) ? ins.live_headlines[0] : null;
         const pair = (SHORT_RADAR[b.id] && SHORT_RADAR[b.id][ins.theme]) || [ins.title.slice(0, 45), ins.summary.slice(0, 95)];
         return `
-          <div class="item-card clickable ${currentTheme === ins.theme ? "active" : ""}" onclick="selectTheme('${ins.theme}')">
+          <button type="button" class="radar-pillar ${currentTheme === ins.theme ? "active" : ""}" onclick="selectTheme('${ins.theme}')">
             <div class="item-top">
               <h3>${esc(ins.theme)}</h3>
               <span class="pill">${count} posts</span>
             </div>
             <h4>${esc(pair[0])}</h4>
             <p>${esc(pair[1])}</p>
-            <div>${ins.geo_keywords.slice(0, 3).map(k => `<span class="pill pill-indigo" style="margin-right:4px">${esc(k)}</span>`).join("")}</div>
+            <div class="radar-keys">${ins.geo_keywords.slice(0, 3).map(k => `<span class="pill pill-indigo">${esc(k)}</span>`).join("")}</div>
             ${topLive ? `
-              <div class="live-line">
-                <span style="color:var(--danger);font-weight:700">Ao vivo:</span> <a href="${topLive.link}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${esc(topLive.title.slice(0, 70))}...</a>
-              </div>
+              <p class="live-line"><span>Ao vivo</span> <a href="${topLive.link}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${esc(topLive.title)}</a></p>
             ` : ""}
-          </div>
+          </button>
         `;
       }).join("");
 
@@ -1096,28 +1218,35 @@
         const prodBadge = cm.product_links > 0
           ? `<span class="pill pill-ok">${cm.product_links} link produto</span>`
           : `<span class="pill pill-danger">Sem link produto</span>`;
+        const scoreTone = cm.onpage_score >= 75 ? "var(--ok)" : (cm.onpage_score >= 60 ? "var(--blue)" : "var(--danger)");
         return `
           <tr>
-            <td>
-              <div style="font-weight:600">${esc(a.date)}</div>
-              <span class="pill" style="margin-top:4px">${esc(a.lang.toUpperCase())}</span>
+            <td class="radar-date">
+              <time datetime="${esc(a.date)}">${esc(a.date)}</time>
+              <span class="pill">${esc(a.lang.toUpperCase())}</span>
             </td>
-            <td>
-              <div style="font-weight:600;margin-bottom:3px"><a href="${a.url}" target="_blank" rel="noopener">${esc(a.title)}</a></div>
-              <div style="color:var(--muted);font-size:0.76rem;margin-bottom:5px">${esc(a.excerpt.slice(0, 125))}...</div>
-              <div>${a.themes.map(t => `<span class="pill" style="margin-right:4px">${esc(t)}</span>`).join("")}</div>
+            <td class="radar-article">
+              <a href="${a.url}" target="_blank" rel="noopener">${esc(a.title)}</a>
+              <p>${esc(a.excerpt)}</p>
+              <div class="radar-keys">${a.themes.map(t => `<span class="pill">${esc(t)}</span>`).join("")}</div>
             </td>
-            <td>
-              <span class="pill ${intentClass}">${esc(cm.intent)}</span>
-              <div style="margin-top:6px">${prodBadge}</div>
+            <td class="radar-funnel">
+              <div class="radar-stack">
+                <span class="pill ${intentClass}">${esc(cm.intent)}</span>
+                ${prodBadge}
+              </div>
             </td>
-            <td style="font-size:0.76rem;color:var(--muted)">
-              <strong>${cm.word_count}</strong> palavras • <strong>${cm.h2_count}</strong> H2<br>
-              <strong>${cm.internal_links}</strong> links int. • <strong>${cm.images_missing_alt || 0}</strong> img s/ alt
+            <td class="radar-onpage">
+              <div class="radar-stack">
+                <span><strong>${cm.word_count}</strong> palavras</span>
+                <span><strong>${cm.h2_count}</strong> H2</span>
+                <span><strong>${cm.internal_links}</strong> links internos</span>
+                <span><strong>${cm.images_missing_alt || 0}</strong> img sem alt</span>
+              </div>
             </td>
-            <td style="text-align:center">
-              <div style="font-size:1.15rem;font-weight:700;color:${cm.onpage_score >= 75 ? 'var(--ok)' : (cm.onpage_score >= 60 ? 'var(--blue)' : 'var(--danger)')}">${cm.onpage_score}</div>
-              <div style="font-size:0.68rem;color:var(--muted)">/ 100</div>
+            <td class="radar-score" style="color:${scoreTone}">
+              <strong>${cm.onpage_score}</strong>
+              <span>/ 100</span>
             </td>
           </tr>
         `;
@@ -1129,34 +1258,31 @@
       document.getElementById("prompts-body").innerHTML = (b.ai_prompts || []).map(p => {
         const stClass = p.status.includes("Gap") ? "pill-danger" : (p.status.includes("Parcial") ? "pill-warn" : "pill-ok");
         return `
-          <tr>
-            <td style="font-weight:600">${esc(p.prompt)}</td>
-            <td>
-              <span class="pill">${esc(p.pillar)}</span><br>
-              <span class="pill pill-indigo" style="margin-top:4px">${esc(p.intent)}</span>
-            </td>
-            <td><span class="pill ${stClass}">${esc(p.status)}</span></td>
-            <td style="font-size:0.78rem">
-              <div style="color:var(--muted);margin-bottom:4px">${esc(p.detail)}</div>
-              <div style="color:var(--blue);font-weight:600">${esc(p.action)}</div>
-            </td>
-          </tr>
+          <article class="answer-card">
+            <h3>${esc(p.prompt)}</h3>
+            <div class="radar-keys">
+              <span class="pill">${esc(p.pillar)}</span>
+              <span class="pill pill-indigo">${esc(p.intent)}</span>
+              <span class="pill ${stClass}">${esc(p.status)}</span>
+            </div>
+            <p>${esc(p.detail)}</p>
+            <p class="answer-action">${esc(p.action)}</p>
+          </article>
         `;
       }).join("");
 
       document.getElementById("autocomplete-grid").innerHTML = (b.autocomplete || []).map(ac => `
-        <div class="item-card">
-          <div class="item-top">
-            <h3>Busca Base: "${esc(ac.seed)}"</h3>
+        <article class="suggest-card">
+          <div class="suggest-head">
+            <h3>${esc(ac.seed)}</h3>
             <span class="pill pill-indigo">${esc(ac.intent)}</span>
           </div>
-          <div style="margin-top:6px">
-            ${(ac.suggestions && ac.suggestions.length)
-              ? ac.suggestions.map(s => `<div style="font-size:0.8rem;padding:4px 0;border-bottom:1px solid var(--border);color:var(--text)">${esc(s)}</div>`).join("")
-              : `<div style="font-size:0.8rem;color:var(--muted)">Sem sugestões retornadas</div>`
-            }
-          </div>
-        </div>
+          <p class="suggest-pillar">${esc(ac.pillar)}</p>
+          ${(ac.suggestions && ac.suggestions.length)
+            ? `<ul class="suggest-list">${ac.suggestions.map(s => `<li>${esc(s)}</li>`).join("")}</ul>`
+            : `<p class="suggest-empty">Sem sugestões retornadas</p>`
+          }
+        </article>
       `).join("");
     }
 
@@ -1168,39 +1294,40 @@
       const orphans = ptArts.filter(a => !a.crawl_metrics || a.crawl_metrics.product_links === 0);
 
       document.getElementById("vitals-grid").innerHTML = `
-        <div class="item-card">
-          <h3>Latência de Servidor (TTFB)</h3>
-          <div style="font-size:1.65rem;font-weight:700;color:var(--blue);margin:4px 0">${v.ttfb_ms || 0} ms</div>
-          <p>Download HTML: ${v.total_load_ms || 0} ms • Borda Cloudflare: <strong>${esc(v.cf_cache)}</strong> (Bom &lt; 800 ms)</p>
-        </div>
-        <div class="item-card">
-          <h3>Peso do Documento & Assets</h3>
-          <div style="font-size:1.65rem;font-weight:700;color:var(--indigo);margin:4px 0">${v.html_size_kb || 0} KB</div>
-          <p>${v.scripts_count || 0} scripts JS • ${v.stylesheets_count || 0} arquivos CSS • ${v.images_missing_alt || 0}/${v.total_images || 0} imagens sem alt na listagem</p>
-        </div>
-        <div class="item-card">
-          <h3>Artigos Órfãos de Conversão</h3>
-          <div style="font-size:1.65rem;font-weight:700;color:var(--danger);margin:4px 0">${orphans.length} de ${ptArts.length}</div>
-          <p>Artigos PT sem link para <code>/nossas-solucoes/</code> • Média de <strong>${avgWords} palavras</strong> por post</p>
-        </div>
+        <article class="vital-card">
+          <h3>Latência do servidor</h3>
+          <strong>${v.ttfb_ms || 0} ms</strong>
+          <p>O HTML leva ${v.total_load_ms || 0} ms para baixar. A borda Cloudflare está em ${esc(v.cf_cache || "—")}. Abaixo de 800 ms está bom.</p>
+        </article>
+        <article class="vital-card">
+          <h3>Peso da página</h3>
+          <strong>${v.html_size_kb || 0} KB</strong>
+          <p>${v.scripts_count || 0} scripts, ${v.stylesheets_count || 0} folhas de estilo e ${v.images_missing_alt || 0} de ${v.total_images || 0} imagens sem texto alternativo.</p>
+        </article>
+        <article class="vital-card alert">
+          <h3>Sem caminho até a solução</h3>
+          <strong>${orphans.length} de ${ptArts.length}</strong>
+          <p>Artigos em português sem link para <code>/nossas-solucoes/</code>. A média do catálogo é ${avgWords} palavras.</p>
+        </article>
       `;
 
       document.getElementById("audit-list").innerHTML = b.seo_geo_audit.critical_findings.map(f => {
         const pillClass = f.severity === "CRITICAL" ? "pill-danger" : (f.severity === "HIGH" ? "pill-warn" : "pill");
         return `
-          <div class="audit-card">
-            <div class="audit-card-head">
+          <article class="finding">
+            <div class="radar-keys">
               <span class="pill ${pillClass}">${esc(f.severity)}</span>
               <span class="pill pill-indigo">${esc(f.category)}</span>
-              <strong style="font-size:0.9rem;color:var(--text)">${esc(f.title)}</strong>
             </div>
-            <div style="font-size:0.81rem;color:var(--muted);margin-bottom:4px"><strong>Evidência no código:</strong> ${esc(f.evidence)}</div>
-            <div style="font-size:0.81rem;color:var(--ok)"><strong>Plano de ação:</strong> ${esc(f.fix)}</div>
-          </div>
+            <h3>${esc(f.title)}</h3>
+            <p>${esc(f.evidence)}</p>
+            <p>${esc(f.impact)}</p>
+            <p class="finding-fix">${esc(f.fix)}</p>
+          </article>
         `;
       }).join("");
 
-      document.getElementById("orphan-count-pill").textContent = `${orphans.length} artigos órfãos`;
+      document.getElementById("orphan-count-pill").textContent = `${orphans.length} artigos`;
       document.getElementById("orphans-body").innerHTML = orphans.map(a => {
         const cm = a.crawl_metrics || { word_count: 0, h2_count: 0 };
         const rec = b.id === "adfert"
@@ -1208,10 +1335,10 @@
           : "Inserir âncora contextual para /nossas-solucoes/ (Protec Foli / Nutrição)";
         return `
           <tr>
-            <td style="font-weight:600">${esc(a.date)}</td>
-            <td><a href="${a.url}" target="_blank" rel="noopener">${esc(a.title)}</a></td>
-            <td style="color:var(--muted)">${cm.word_count} palavras • ${cm.h2_count} H2</td>
-            <td style="color:var(--blue);font-weight:500">${rec}</td>
+            <td class="health-date"><time datetime="${esc(a.date)}">${esc(a.date)}</time></td>
+            <td class="health-article"><a href="${a.url}" target="_blank" rel="noopener">${esc(a.title)}</a></td>
+            <td><div class="health-stack"><span><strong>${cm.word_count}</strong> palavras</span><span><strong>${cm.h2_count}</strong> H2</span></div></td>
+            <td class="health-next">${rec}</td>
           </tr>
         `;
       }).join("");
@@ -1230,6 +1357,8 @@
     document.getElementById("lang-filter").addEventListener("change", renderArticles);
 
     renderAll();
+    const opened = Number(String(location.hash || "").replace("#", ""));
+    if (opened >= 1 && opened <= 4) switchScreen(opened);
   </script>
 </body>
 </html>

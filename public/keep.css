@@ -29,3 +29,16 @@
 .lead-form .field{margin:0}
 .auth-actions{display:grid;gap:8px}
 @media(max-width:760px){.lead-form{width:100%;margin-top:22px}}
+
+@media (min-width:961px){
+  html:has(.auth-layout),body:has(.auth-layout){height:100vh;overflow:hidden}
+  .auth-layout{height:100vh;min-height:0;overflow:hidden}
+  .auth-story{position:relative;height:100vh;overflow:hidden;padding:28px 48px 24px}
+  .auth-story h1{margin-top:28px;font-size:40px}
+  .auth-story p{margin-top:12px;max-width:300px}
+  .auth-story h1,.auth-story p,.auth-story .auth-foot{position:relative;z-index:2}
+  .auth-story .auth-foot{max-width:270px}
+  .auth-story .auth-mascot{position:absolute;z-index:1;right:36px;top:250px;bottom:auto;width:min(420px,calc(100% - 400px));height:auto;max-height:none;margin:0;object-fit:contain;object-position:right top;pointer-events:none}
+  .auth-main{height:100vh;overflow:hidden;padding:24px 48px}
+  .auth-form h2{font-size:28px}
+}

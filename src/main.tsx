@@ -9,6 +9,7 @@ declare global {
   interface Window {
     KeepAuth: {
       session: Session | null;
+      preview: boolean;
       sign: (mode: string, credentials: Credentials) => Promise<AuthResult>;
       saveLead: (lead: Lead) => Promise<AuthResult>;
       signOut: () => Promise<void>;
@@ -21,6 +22,7 @@ const missing = "O banco deste projeto ainda não está conectado.";
 
 window.KeepAuth = {
   session: null,
+  preview: !supabase,
   async sign(mode, credentials) {
     if (!supabase) return { error: missing };
     if (mode === "sign-up") {
